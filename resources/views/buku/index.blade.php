@@ -3,7 +3,7 @@
 @section('content')
 
 {{-- Database Buku --}}
-<h4 class="mt-4 mb-3">Database Buku</h4>
+<h4 class="mt-4 mb-3">Pustaka Buku</h4>
 <form method="GET" action="{{ route('buku.index') }}" class="mb-3">
     <div class="d-flex gap-2 flex-wrap align-items-center">
         {{-- Filter Penulis --}}
