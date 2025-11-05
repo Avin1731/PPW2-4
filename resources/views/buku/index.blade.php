@@ -27,8 +27,12 @@
 
         <button type="submit" class="btn btn-primary">Cari</button>
 
-        <a href="{{ route('buku.create') }}" class="btn btn-success">Tambah Buku</a>
-    </div>
+        @auth
+            @if(Auth::user()->role == 'admin')
+                <a href="{{ route('buku.create') }}" class="btn btn-success">Tambah Buku</a>
+            @endif
+        @endauth
+        </div>
 </form>
 
 @if($data_buku->isEmpty())
@@ -57,56 +61,66 @@
             <td>
                 <div class="aksi-buttons">
                     <a href="{{ route('buku.show',$buku->id) }}" class="btn btn-info btn-sm">Detail</a>
-                    <a href="{{ route('buku.edit',$buku->id) }}" class="btn btn-warning btn-sm">Edit</a>
-                    <form action="{{ route('buku.destroy',$buku->id) }}" method="POST" style="display:inline;">
-                        @csrf
-                        @method('DELETE')
-                        <button class="btn btn-danger btn-sm" onclick="return confirm('Yakin hapus?')">Hapus</button>
-                    </form>
-                </div>
+
+                    @auth
+                        @if(Auth::user()->role == 'admin')
+                            <a href="{{ route('buku.edit',$buku->id) }}" class="btn btn-warning btn-sm">Edit</a>
+                            <form action="{{ route('buku.destroy',$buku->id) }}" method="POST" style="display:inline;">
+                                @csrf
+                                @method('DELETE')
+                                <button class="btn btn-danger btn-sm" onclick="return confirm('Yakin hapus?')">Hapus</button>
+                            </form>
+                        @endif
+                    @endauth
+                    </div>
             </td>
         </tr>
         @endforeach
     </tbody>
 </table>
 
-{{-- Kotak Statistik --}}
-<h4 class="mt-4 mb-3">Statistik Buku</h4>
-<div class="row">
-    <div class="col-md-3">
-        <div class="card bg-primary text-white text-center mb-3">
-            <div class="card-header">Total Buku</div>
-            <div class="card-body">
-                <h3>{{ $total_buku }}</h3>
+@auth
+    @if(Auth::user()->role == 'admin')
+        
+        {{-- Kotak Statistik --}}
+        <h4 class="mt-4 mb-3">Statistik Buku</h4>
+        <div class="row">
+            <div class="col-md-3">
+                <div class="card bg-primary text-white text-center mb-3">
+                    <div class="card-header">Total Buku</div>
+                    <div class="card-body">
+                        <h3>{{ $total_buku }}</h3>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card bg-success text-white text-center mb-3">
+                    <div class="card-header">Total Harga</div>
+                    <div class="card-body">
+                        <h3>Rp {{ number_format($total_harga, 0, ',', '.') }}</h3>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card bg-info text-white text-center mb-3">
+                    <div class="card-header">Harga Tertinggi</div>
+                    <div class="card-body">
+                        <h3>Rp {{ number_format($harga_tertinggi, 0, ',', '.') }}</h3>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card bg-warning text-white text-center mb-3">
+                    <div class="card-header">Harga Terendah</div>
+                    <div class="card-body">
+                        <h3>Rp {{ number_format($harga_terendah, 0, ',', '.') }}</h3>
+                    </div>
+                </div>
             </div>
         </div>
-    </div>
-    <div class="col-md-3">
-        <div class="card bg-success text-white text-center mb-3">
-            <div class="card-header">Total Harga</div>
-            <div class="card-body">
-                <h3>Rp {{ number_format($total_harga, 0, ',', '.') }}</h3>
-            </div>
-        </div>
-    </div>
-    <div class="col-md-3">
-        <div class="card bg-info text-white text-center mb-3">
-            <div class="card-header">Harga Tertinggi</div>
-            <div class="card-body">
-                <h3>Rp {{ number_format($harga_tertinggi, 0, ',', '.') }}</h3>
-            </div>
-        </div>
-    </div>
-    <div class="col-md-3">
-        <div class="card bg-warning text-white text-center mb-3">
-            <div class="card-header">Harga Terendah</div>
-            <div class="card-body">
-                <h3>Rp {{ number_format($harga_terendah, 0, ',', '.') }}</h3>
-            </div>
-        </div>
-    </div>
-</div>
 
+    @endif
+@endauth
 {{-- 5 Buku Terbaru --}}
 <h4 class="mt-4 mb-3">5 Buku Terbaru</h4>
 <table class="table table-bordered table-modern">
