@@ -12,10 +12,18 @@ return Application::configure(basePath: dirname(__DIR__))
     )
     ->withMiddleware(function (Middleware $middleware): void {
         
-        // DOKUMENTASI: Anda lupa menambahkan alias ini
+        // DOKUMENTASI: Ini alias 'isAdmin' yang sudah ada
         $middleware->alias([
             'isAdmin' => \App\Http\Middleware\IsAdmin::class,
         ]);
+
+        // DOKUMENTASI: TAMBAHKAN BLOK INI
+        // Ini mendaftarkan LogPageVisit ke grup 'web'
+        // agar berjalan di setiap request halaman
+        $middleware->web(append: [
+            \App\Http\Middleware\LogPageVisit::class,
+        ]);
+        // --- BATAS TAMBAHAN ---
 
     })
     ->withExceptions(function (Exceptions $exceptions): void {

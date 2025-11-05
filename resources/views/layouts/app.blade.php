@@ -27,6 +27,23 @@
         }
         .navbar .btn-link.nav-link:hover { color: rgba(255, 255, 255, 0.75); }
 
+        /* DOKUMENTASI: Style untuk dropdown menu baru */
+        .dropdown-menu {
+            background-color: #2c3e50; /* Latar gelap */
+            border: 1px solid #34495e;
+        }
+        .dropdown-item {
+            color: #ecf0f1; /* Teks putih */
+        }
+        .dropdown-item:hover {
+            background-color: #34495e; /* Hover lebih gelap */
+            color: #4ecca3; /* Aksen mint */
+        }
+        .dropdown-divider {
+            border-top: 1px solid #34495e;
+        }
+        /* --- Batas Style Dropdown --- */
+
         h4, h3, h5 {
             color: #ffffff;
             border-bottom: 1px solid #34495e;
@@ -50,7 +67,7 @@
             background-color: #58e0b0; border-color: #58e0b0; color: #1f2833;
         }
 
-        /* --- STYLING TABEL (DITAMBAH ROUNDED) --- */
+        /* --- STYLING TABEL (Rounded) --- */
         .table {
             color: #ecf0f1 !important; 
             border-color: #34495e !important;
@@ -58,10 +75,8 @@
             --bs-table-striped-bg: #2c3e50 !important;
             --bs-table-color: #ecf0f1 !important;
             
-            /* DOKUMENTASI: Ini untuk membuat ujung tabel melengkung */
             border-radius: 8px;
             overflow: hidden; 
-            /* --------------------------------------------------- */
         }
 
         /* Target THEAD (Header) */
@@ -189,7 +204,23 @@
                         <li class="nav-item">
                             <a class="nav-link" href="{{ route('buku.index') }}">Data Buku</a>
                         </li>
-                    @endauth
+
+                        @if(Auth::user()->role == 'admin')
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="analyticsDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                Perangkat Analisis
+                            </a>
+                            <ul class="dropdown-menu" aria-labelledby="analyticsDropdown">
+                                <li><a class="dropdown-item" href="{{ route('admin.analytics.index') }}">📈 Dashboard Grafik</a></li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li><a class="dropdown-item" href="{{ route('admin.history.users') }}">Riwayat Pendaftaran</a></li>
+                                <li><a class="dropdown-item" href="{{ route('admin.history.activity') }}">Riwayat Aktivitas</a></li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li><a class="dropdown-item" href="{{ route('admin.reports.buku.excel') }}">Unduh Laporan (Excel)</a></li>
+                            </ul>
+                        </li>
+                        @endif
+                        @endauth
                 </ul>
 
                 <ul class="navbar-nav ms-auto">
@@ -234,5 +265,7 @@
     </footer>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    @stack('scripts')
 </body>
 </html>
