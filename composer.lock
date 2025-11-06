@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "291af213e390cd84233b43f1f301d2b5",
+    "content-hash": "919a23740e58a2e010e4708b2005fc37",
     "packages": [
         {
             "name": "brick/math",
@@ -3939,16 +3939,16 @@
         },
         {
             "name": "spatie/laravel-activitylog",
-            "version": "4.10.2",
+            "version": "dev-main",
             "source": {
                 "type": "git",
                 "url": "https://github.com/spatie/laravel-activitylog.git",
-                "reference": "bb879775d487438ed9a99e64f09086b608990c10"
+                "reference": "ffadece30b5184d0364b49c302430928637148a7"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/spatie/laravel-activitylog/zipball/bb879775d487438ed9a99e64f09086b608990c10",
-                "reference": "bb879775d487438ed9a99e64f09086b608990c10",
+                "url": "https://api.github.com/repos/spatie/laravel-activitylog/zipball/ffadece30b5184d0364b49c302430928637148a7",
+                "reference": "ffadece30b5184d0364b49c302430928637148a7",
                 "shasum": ""
             },
             "require": {
@@ -3963,6 +3963,7 @@
                 "orchestra/testbench": "^6.23 || ^7.0 || ^8.0 || ^9.0 || ^10.0",
                 "pestphp/pest": "^1.20 || ^2.0 || ^3.0"
             },
+            "default-branch": true,
             "type": "library",
             "extra": {
                 "laravel": {
@@ -4014,7 +4015,7 @@
             ],
             "support": {
                 "issues": "https://github.com/spatie/laravel-activitylog/issues",
-                "source": "https://github.com/spatie/laravel-activitylog/tree/4.10.2"
+                "source": "https://github.com/spatie/laravel-activitylog/tree/main"
             },
             "funding": [
                 {
@@ -4026,7 +4027,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2025-06-15T06:59:49+00:00"
+            "time": "2025-09-08T08:00:57+00:00"
         },
         {
             "name": "spatie/laravel-package-tools",
@@ -9192,7 +9193,9 @@
     ],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": {},
+    "stability-flags": {
+        "spatie/laravel-activitylog": 20
+    },
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {

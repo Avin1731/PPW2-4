@@ -7,6 +7,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use App\Jobs\SendWelcomeEmailJob; // <-- DOKUMENTASI: 1. Import Job kita
 
 class LoginRegisterController extends Controller
 {
@@ -31,15 +32,26 @@ class LoginRegisterController extends Controller
             'password' => 'required|confirmed|min:8',
         ]);
 
-        // Buat user baru tanpa login otomatis
-        User::create([
+        // DOKUMENTASI: 2. Buat user baru DAN simpan di variabel $user
+        $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
+            // 'role' akan otomatis 'user' karena default di database
         ]);
 
+        // DOKUMENTASI: 3. Panggil Job dan masukkan ke antrian
+        // Kirimkan objek $user yang baru dibuat ke Job
+        try {
+            SendWelcomeEmailJob::dispatch($user);
+        } catch (\Exception $e) {
+            // Jika antrian gagal (misal .env salah),
+            // jangan gagalkan registrasi. Cukup catat errornya.
+            report($e);
+        }
+
         // Redirect ke login dengan flash message sukses
-        return redirect()->route('login')->with('success', 'Registrasi berhasil! Silakan login.');
+        return redirect()->route('login')->with('success', 'Registrasi berhasil! Silakan login. Cek email Anda untuk konfirmasi.');
     }
 
     // 🔹 Halaman Login
