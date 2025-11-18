@@ -13,9 +13,6 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // DOKUMENTASI: Kita hapus/kosongkan tabel user dulu
-        // agar tidak error 'duplicate email' saat seeder dijalankan ulang
-        User::truncate();
 
         // DOKUMENTASI: Buat 1 user Admin
         User::create([

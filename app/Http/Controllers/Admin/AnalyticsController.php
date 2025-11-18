@@ -85,4 +85,21 @@ class AnalyticsController extends Controller
     {
         return Excel::download(new BukuExport, 'laporan_buku_pustaka.xlsx');
     }
+
+    public function uploadBukuExcel(Request $request)
+    {
+        // Validasi file yang diunggah
+        $request->validate([
+            'buku_excel' => 'required|file|mimes:xlsx,csv,ods',
+        ]);
+
+        $file = $request->file('buku_excel');
+
+        try {
+            Excel::import(new \App\Imports\BukuImport, $file);
+            return redirect()->back()->with('success', 'Data buku berhasil diimpor dari file Excel.');
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', 'Terjadi kesalahan saat mengimpor data: ' . $e->getMessage());
+        }
+    }
 }

@@ -205,6 +205,27 @@
                             <a class="nav-link" href="{{ route('buku.index') }}">Data Buku</a>
                         </li>
 
+                        {{-- === LOGIC MENU LOKER (BARU) === --}}
+                        @if(Auth::user()->role == 'admin')
+                            {{-- Menu Admin --}}
+                            <li class="nav-item">
+                                <a class="nav-link {{ request()->routeIs('admin.lokers.*') ? 'active' : '' }}" 
+                                   href="{{ route('admin.lokers.index') }}">
+                                   Kelola Loker
+                                </a>
+                            </li>
+                        @else
+                            {{-- Menu User Biasa --}}
+                            <li class="nav-item">
+                                <a class="nav-link {{ request()->routeIs('lokers.*') ? 'active' : '' }}" 
+                                   href="{{ route('lokers.index') }}">
+                                   Info Loker
+                                </a>
+                            </li>
+                        @endif
+                        {{-- === BATAS LOGIC MENU LOKER === --}}
+
+
                         @if(Auth::user()->role == 'admin')
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle" href="#" id="analyticsDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
@@ -255,6 +276,14 @@
                     {{ session('success') }}
                 </div>
             @endif
+            
+            {{-- Tambahan alert untuk error jika import gagal --}}
+            @if(session('error'))
+                <div class="alert alert-warning">
+                    {{ session('error') }}
+                </div>
+            @endif
+
             @yield('content')
         </div>
     </main>
