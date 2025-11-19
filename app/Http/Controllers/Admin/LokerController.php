@@ -76,4 +76,28 @@ class LokerController extends Controller
 
         return back()->with('success', 'Pelamar berhasil ' . $statusMsg);
     }
+
+    // [BARU] Tampilkan Form Edit
+    public function edit($id)
+    {
+        $loker = Loker::findOrFail($id);
+        return view('admin.lokers.edit', compact('loker'));
+    }
+
+    // [BARU] Proses Update Data
+    public function update(Request $request, $id)
+    {
+        $request->validate([
+            'title'       => 'required|string|max:255',
+            'description' => 'required|string',
+            'location'    => 'nullable|string',
+            'deadline'    => 'nullable|date',
+            'available_positions' => 'nullable|string', // Validasi untuk posisi
+        ]);
+
+        $loker = Loker::findOrFail($id);
+        $loker->update($request->all());
+
+        return redirect()->route('admin.lokers.index')->with('success', 'Loker berhasil diperbarui!');
+    }
 }

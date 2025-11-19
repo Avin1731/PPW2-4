@@ -5,7 +5,6 @@ use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\BukuController;
 use App\Http\Controllers\Auth\LoginRegisterController;
 use App\Http\Controllers\Admin\AnalyticsController; 
-// Perhatikan alias ini agar tidak bentrok
 use App\Http\Controllers\Admin\LokerController as AdminLokerController; 
 use App\Http\Controllers\LokerController; 
 
@@ -38,15 +37,20 @@ Route::controller(LoginRegisterController::class)->group(function () {
 // ====================================================
 Route::middleware('auth')->group(function () {
     
-    // --- Rute Buku (Read Only) ---
+    // --- Rute Buku ---
     Route::get('/buku', [BukuController::class, 'index'])->name('buku.index');
     Route::get('/buku/{buku}', [BukuController::class, 'show'])->name('buku.show');
     Route::get('/buku/cetak/pdf', [BukuController::class, 'cetakPDF'])->name('buku.cetak.pdf');
 
     // --- Rute Loker untuk User (Pelamar) ---
-    // Halaman list loker yang tersedia
+    
+    // 1. List Loker
     Route::get('/loker', [LokerController::class, 'index'])->name('lokers.index'); 
-    // Proses upload CV / Apply
+    
+    // 2. [DITAMBAHKAN] Detail Loker
+    Route::get('/loker/{id}', [LokerController::class, 'show'])->name('lokers.show'); 
+
+    // 3. Proses Apply
     Route::post('/loker/{id}/apply', [LokerController::class, 'store'])->name('lokers.apply'); 
 });
 
@@ -74,16 +78,20 @@ Route::middleware(['auth', 'isAdmin'])->group(function () {
     // 1. Halaman Utama Kelola Loker
     Route::get('/admin/lokers', [AdminLokerController::class, 'index'])->name('admin.lokers.index');
     
-    // 2. Download Template Excel & Import
+    // 2. [DITAMBAHKAN] Edit Loker
+    Route::get('/admin/lokers/{id}/edit', [AdminLokerController::class, 'edit'])->name('admin.lokers.edit');
+    Route::put('/admin/lokers/{id}', [AdminLokerController::class, 'update'])->name('admin.lokers.update');
+    
+    // 3. Download Template & Import
     Route::get('/admin/lokers/template', [AdminLokerController::class, 'downloadTemplate'])->name('admin.lokers.template');
     Route::post('/admin/lokers/import', [AdminLokerController::class, 'import'])->name('admin.lokers.import');
     
-    // 3. Export Data Pelamar (CSV)
+    // 4. Export Data Pelamar (CSV)
     Route::get('/admin/lokers/{id}/export', [AdminLokerController::class, 'exportApplicants'])->name('admin.lokers.export');
 
-    // 4. [BARU] Lihat Daftar Pelamar per Loker
+    // 5. Lihat Daftar Pelamar per Loker
     Route::get('/admin/lokers/{id}/applicants', [AdminLokerController::class, 'showApplicants'])->name('admin.lokers.applicants');
     
-    // 5. [BARU] Aksi Terima / Tolak Pelamar
+    // 6. Aksi Terima / Tolak Pelamar
     Route::post('/admin/applies/{id}/status', [AdminLokerController::class, 'updateStatus'])->name('admin.applies.status');
 });

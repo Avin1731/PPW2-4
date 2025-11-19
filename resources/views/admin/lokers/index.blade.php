@@ -121,14 +121,28 @@
                             </td>
                             <td class="pe-4 text-end">
                                 @if($loker->applies_count > 0)
-                                    {{-- Tombol Detail Pelamar --}}
-                                    <a href="{{ route('admin.lokers.applicants', $loker->id) }}" class="btn btn-sm btn-outline-info" title="Lihat Detail Pelamar">
-                                        👁 Detail
-                                    </a>
+                                    <div class="btn-group" role="group">
+                                        {{-- Tombol Detail Pelamar --}}
+                                        <a href="{{ route('admin.lokers.applicants', $loker->id) }}" class="btn btn-sm btn-outline-info" title="Lihat Detail Pelamar">
+                                            👁 Detail
+                                        </a>
+                                        
+                                        {{-- Tombol Edit --}}
+                                        <a href="{{ route('admin.lokers.edit', $loker->id) }}" class="btn btn-sm btn-outline-warning" title="Edit Loker">
+                                            ✏️ Edit
+                                        </a>
+                                    </div>
                                 @else
-                                    <button class="btn btn-sm btn-outline-secondary" disabled>
-                                        ❌ Kosong
-                                    </button>
+                                    <div class="btn-group" role="group">
+                                        <button class="btn btn-sm btn-outline-secondary" disabled>
+                                            ❌ Kosong
+                                        </button>
+                                        
+                                        {{-- Tombol Edit (Tetap muncul meski pelamar kosong) --}}
+                                        <a href="{{ route('admin.lokers.edit', $loker->id) }}" class="btn btn-sm btn-outline-warning" title="Edit Loker">
+                                            ✏️ Edit
+                                        </a>
+                                    </div>
                                 @endif
                             </td>
                         </tr>

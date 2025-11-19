@@ -46,4 +46,16 @@ class LokerController extends Controller
 
         return redirect()->back()->with('success', 'Lamaran untuk posisi ' . $request->position . ' berhasil dikirim!');
     }
+    // [BARU] Halaman Detail Loker
+    public function show($id)
+    {
+        $job = Loker::findOrFail($id);
+        
+        // Cek apakah user sudah melamar loker ini
+        $hasApplied = Apply::where('user_id', Auth::id())
+                            ->where('loker_id', $id)
+                            ->exists();
+
+        return view('loker.show', compact('job', 'hasApplied'));
+    }
 }
