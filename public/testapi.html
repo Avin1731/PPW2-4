@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Data Buku Lengkap + Paginasi</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 40px;
+            background-color: #f4f4f9;
+        }
+        h2 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        /* Styling Tabel */
+        .styled-table {
+            width: 100%;
+            border-collapse: collapse;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+            background-color: white;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        .styled-table thead tr {
+            background-color: #009879;
+            color: #ffffff;
+            text-align: left;
+        }
+        .styled-table th, .styled-table td {
+            padding: 12px 15px;
+        }
+        .styled-table tbody tr {
+            border-bottom: 1px solid #dddddd;
+        }
+        .styled-table tbody tr:nth-of-type(even) {
+            background-color: #f3f3f3;
+        }
+        .styled-table tbody tr:hover {
+            background-color: #f1f1f1;
+        }
+
+        /* Styling Paginasi */
+        .pagination-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-top: 20px;
+            gap: 15px;
+        }
+        .btn-page {
+            padding: 10px 20px;
+            background-color: #009879;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: 0.3s;
+        }
+        .btn-page:hover {
+            background-color: #007f67;
+        }
+        .btn-page:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
+        #page-info {
+            font-weight: bold;
+            color: #555;
+        }
+
+        /* Styling Pesan Error */
+        #status-message {
+            text-align: center;
+            margin-top: 20px;
+            font-weight: bold;
+            color: #666;
+        }
+        .error { color: red; }
+    </style>
+</head>
+<body>
+
+    <h2>Daftar Koleksi Buku</h2>
+    
+    <table class="styled-table">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Judul Buku</th>
+                <th>Penulis</th>
+                <th>Harga</th>
+                <th>Tgl Terbit</th>
+            </tr>
+        </thead>
+        <tbody id="table-body">
+            </tbody>
+    </table>
+
+    <div id="status-message">Sedang memuat data...</div>
+
+    <div class="pagination-container">
+        <button id="btn-prev" class="btn-page" disabled>Sebelumnya</button>
+        <span id="page-info">Halaman -</span>
+        <button id="btn-next" class="btn-page" disabled>Selanjutnya</button>
+    </div>
+
+    <script>
+        // URL Default
+        const BASE_URL = '/api/books';
+        
+        // Variabel Global untuk menyimpan URL pagination
+        let nextPageUrl = null;
+        let prevPageUrl = null;
+
+        const formatRupiah = (number) => {
+            return new Intl.NumberFormat('id-ID', { 
+                style: 'currency', 
+                currency: 'IDR',
+                minimumFractionDigits: 0
+            }).format(number);
+        }
+
+        // Fungsi fetch menerima parameter URL (opsional)
+        async function getBooks(url = BASE_URL) {
+            const tableBody = document.getElementById('table-body');
+            const statusMsg = document.getElementById('status-message');
+            const btnPrev = document.getElementById('btn-prev');
+            const btnNext = document.getElementById('btn-next');
+            const pageInfo = document.getElementById('page-info');
+
+            // Tampilkan loading saat ganti halaman
+            statusMsg.style.display = 'block';
+            statusMsg.innerText = 'Memuat...';
+            tableBody.innerHTML = ''; 
+
+            try {
+                let response = await fetch(url);
+                if (!response.ok) throw new Error(`Error: ${response.status}`);
+                
+                let result = await response.json();
+                
+                if (result.data && result.data.data) {
+                    // 1. Render Data Tabel
+                    let books = result.data.data; // Data Array Buku
+                    let meta = result.data;       // Data Pagination Laravel (current_page, etc)
+                    
+                    if (books.length === 0) {
+                        statusMsg.innerText = "Tidak ada data buku.";
+                        return;
+                    }
+
+                    let html = '';
+                    books.forEach(book => {
+                        let harga = book.price ? formatRupiah(book.price) : '-';
+                        html += `
+                            <tr>
+                                <td>${book.id}</td>
+                                <td><strong>${book.title}</strong></td>
+                                <td>${book.writer}</td>
+                                <td>${harga}</td>
+                                <td>${book.published_date}</td>
+                            </tr>
+                        `;
+                    });
+
+                    tableBody.innerHTML = html;
+                    statusMsg.style.display = 'none';
+
+                    // 2. Update Info Paginasi
+                    pageInfo.innerText = `Halaman ${meta.current_page} dari ${meta.last_page}`;
+                    
+                    // 3. Simpan URL Next/Prev dari response Laravel
+                    nextPageUrl = meta.next_page_url;
+                    prevPageUrl = meta.prev_page_url;
+
+                    // 4. Aktifkan/Matikan Tombol
+                    btnNext.disabled = !nextPageUrl; // Disable jika next null
+                    btnPrev.disabled = !prevPageUrl; // Disable jika prev null
+
+                }
+
+            } catch (error) {
+                console.error(error);
+                statusMsg.innerHTML = `<span class="error">Gagal mengambil data.</span>`;
+            }
+        }
+
+        // Event Listeners untuk Tombol
+        document.getElementById('btn-next').addEventListener('click', () => {
+            if (nextPageUrl) getBooks(nextPageUrl);
+        });
+
+        document.getElementById('btn-prev').addEventListener('click', () => {
+            if (prevPageUrl) getBooks(prevPageUrl);
+        });
+
+        // Load pertama kali
+        getBooks();
+    </script>
+</body>
+</html>
